@@ -14,7 +14,8 @@ const config = {
 	plugins: [
 		new webpack.HotModuleReplacementPlugin(),
 		new HtmlWebpackPlugin({
-			template: "./src/index.pug"
+			template: "./src/index.pug",
+			filename: path.resolve(__dirname, "index.html")
 		}),
 		new MiniCssExtractPlugin({
 			filename: devMode ? "[name].css" : "[name].[hash].css",
