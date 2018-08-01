@@ -1,16 +1,18 @@
+const webpack = require("webpack");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const devMode = process.env.NODE_ENV !== "production";
 
 const config = {
-	mode: "production",
+	mode: "development",
 	entry: "./src/js/app.js",
 	output: {
 		path: path.resolve(__dirname, "dist"),
 		filename: "bundle.js"
 	},
 	plugins: [
+		new webpack.HotModuleReplacementPlugin(),
 		new HtmlWebpackPlugin({
 			template: "./src/index.pug"
 		}),
