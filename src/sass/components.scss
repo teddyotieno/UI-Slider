@@ -12,3 +12,30 @@
 		}
 	}
 }
+
+.wrapper {
+	overflow-x: hidden;
+}
+
+.moving-boxes-container {
+	width: 300vw;
+	display: flex;
+	.c-moving-box {
+		height: 600px;
+		width: 100vw;
+	}
+}
+
+.c-moving-box:nth-child(1) {
+	background: #e1e4ea;
+	position: absolute;
+	left: -100vw;
+}
+.c-moving-box:nth-child(2) {
+	background: red;
+	position: absolute;
+	left: -100vw;
+}
+.c-moving-box:nth-child(3) {
+	background: #ebe7e4;
+}

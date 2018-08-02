@@ -64,7 +64,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "6d983f5dbdc4c663eaa0";
+/******/ 	var hotCurrentHash = "6c64ea0ad27bfec8cdec";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -801,7 +801,7 @@
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/lib/css-base.js */ \"./node_modules/css-loader/lib/css-base.js\")(false);\n// imports\nexports.push([module.i, \"@import url(https://fonts.googleapis.com/css?family=Reem+Kufi|Teko);\", \"\"]);\n\n// module\nexports.push([module.i, \".logo-heading {\\n  text-transform: uppercase;\\n  font-size: 48px;\\n  font-family: \\\"Teko\\\", sans-serif; }\\n\\n.l-flex-space-between {\\n  display: flex;\\n  justify-content: space-between; }\\n\\n.c-nav {\\n  padding: 20px 30px;\\n  display: flex;\\n  justify-content: space-between;\\n  align-items: center; }\\n  .c-nav .nav-links a {\\n    font-family: \\\"Reem Kufi\\\", sans-serif;\\n    font-size: 18px;\\n    color: #080808;\\n    padding: 0 15px; }\\n\\n* {\\n  box-sizing: border-box;\\n  margin: 0;\\n  padding: 0; }\\n\\na {\\n  text-decoration: none; }\\n\\nbody {\\n  background: #fff; }\\n\", \"\"]);\n\n// exports\n\n\n//# sourceURL=webpack:///./src/sass/app.scss?./node_modules/css-loader!./node_modules/postcss-loader/lib!./node_modules/sass-loader/lib/loader.js");
+eval("exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/lib/css-base.js */ \"./node_modules/css-loader/lib/css-base.js\")(false);\n// imports\nexports.push([module.i, \"@import url(https://fonts.googleapis.com/css?family=Reem+Kufi|Teko);\", \"\"]);\n\n// module\nexports.push([module.i, \".logo-heading {\\n  text-transform: uppercase;\\n  font-size: 48px;\\n  font-family: \\\"Teko\\\", sans-serif; }\\n\\n.l-flex-space-between {\\n  display: flex;\\n  justify-content: space-between; }\\n\\n.c-nav {\\n  padding: 20px 30px;\\n  display: flex;\\n  justify-content: space-between;\\n  align-items: center; }\\n  .c-nav .nav-links a {\\n    font-family: \\\"Reem Kufi\\\", sans-serif;\\n    font-size: 18px;\\n    color: #080808;\\n    padding: 0 15px; }\\n\\n.c-product {\\n  background: #e1e4ea; }\\n  .c-product__close-button {\\n    display: flex;\\n    justify-content: flex-end; }\\n\\n* {\\n  box-sizing: border-box;\\n  margin: 0;\\n  padding: 0; }\\n\\na {\\n  text-decoration: none; }\\n\\nbody {\\n  background: #fff; }\\n\", \"\"]);\n\n// exports\n\n\n//# sourceURL=webpack:///./src/sass/app.scss?./node_modules/css-loader!./node_modules/postcss-loader/lib!./node_modules/sass-loader/lib/loader.js");
 
 /***/ }),
 
