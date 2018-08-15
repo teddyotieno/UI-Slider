@@ -2,7 +2,6 @@ const webpack = require("webpack");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const devMode = process.env.NODE_ENV !== "production";
 
 const config = {
 	mode: "development",
@@ -16,10 +15,7 @@ const config = {
 		new HtmlWebpackPlugin({
 			template: "./src/index.pug"
 		}),
-		new MiniCssExtractPlugin({
-			filename: devMode ? "[name].css" : "[name].[hash].css",
-			chunkFilename: devMode ? "[id].css" : "[id].[hash].css"
-		})
+		new MiniCssExtractPlugin()
 	],
 	module: {
 		rules: [
@@ -34,19 +30,7 @@ const config = {
 			},
 			{
 				test: /\.(sa|sc|c)ss$/,
-				use: [
-					devMode
-						? "style-loader"
-						: {
-								loader: MiniCssExtractPlugin.loader,
-								options: {
-									publicPath: path.join(__dirname, "dist")
-								}
-						  },
-					"css-loader",
-					"postcss-loader",
-					"sass-loader"
-				]
+				use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"]
 			}
 		]
 	}
