@@ -1,7 +1,4 @@
 @import url("https://fonts.googleapis.com/css?family=Reem+Kufi|Teko");
-@import "typography";
-@import "layout";
-@import "components";
 
 * {
   box-sizing: border-box;
@@ -14,7 +11,7 @@ a {
 }
 
 body {
-  background: #fff;
+  background: orange;
 }
 
 .c-nav {
