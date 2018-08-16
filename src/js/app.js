@@ -2,7 +2,10 @@ import styles from "../sass/app.scss";
 
 document.addEventListener("DOMContentLoaded", () => {
   const cards = document.querySelectorAll("div.card");
-  const parentContainerWidth = document.getElementById("container").offsetWidth;
+  const cardWidth = document.getElementById("container").offsetWidth;
+  const gutterSpace = 120;
+  const cardWidthAndGutterSpace = cardWidth + gutterSpace;
+
   let counter = 1;
 
   // create initial state for the elements
@@ -10,9 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (index === 0) {
       item.style.left = "0px";
     } else if (index === 1) {
-      item.style.left = `${parentContainerWidth}px`;
+      item.style.left = `${cardWidthAndGutterSpace}px`;
     } else {
-      item.style.left = `${parentContainerWidth * 2}px`;
+      item.style.left = `${cardWidthAndGutterSpace * 2}px`;
     }
   });
 
@@ -23,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (counter > 1) {
       cards.forEach(item => {
         item.style.left = `${parseInt(item.style.left, 10) +
-          parentContainerWidth}px`;
+          cardWidthAndGutterSpace}px`;
       });
       counter--;
     }
@@ -33,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (counter < cards.length) {
       cards.forEach(item => {
         item.style.left = `${parseInt(item.style.left, 10) -
-          parentContainerWidth}px`;
+          cardWidthAndGutterSpace}px`;
       });
       counter++;
     }

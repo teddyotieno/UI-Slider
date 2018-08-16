@@ -38,8 +38,15 @@ nav {
   }
 }
 
+main {
+  height: 80vh;
+  display: flex;
+  align-items: center;
+}
+
 .slide-wrapper {
   display: flex;
+  width: 100%;
   .controls,
   .other-controls {
     flex-basis: 5%;
@@ -58,15 +65,16 @@ nav {
   }
   #container {
     flex-grow: 1;
-    height: 80vh;
+    height: 60vh;
     position: relative;
     overflow: hidden;
     .card {
       position: absolute;
-      top: 0;
       width: 100%;
       height: 100%;
-      margin-right: 75px;
+      transition-property: left;
+      transition-duration: 950ms;
+      transition-timing-function: cubic-bezier(0.51, 0.02, 0.12, 1);
     }
     .card:nth-child(1) {
       background: #c0c0c0;
