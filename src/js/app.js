@@ -1,22 +1,16 @@
 import styles from "../sass/app.scss";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const cards = document.querySelectorAll("div.card");
+  const cards = document.querySelectorAll("div.card-wrapper");
   const cardWidth = document.getElementById("container").offsetWidth;
-  const gutterSpace = 120;
-  const cardWidthAndGutterSpace = cardWidth + gutterSpace;
-
   let counter = 1;
 
   // create initial state for the elements
   cards.forEach((item, index) => {
-    if (index === 0) {
-      item.style.left = "0px";
-    } else if (index === 1) {
-      item.style.left = `${cardWidthAndGutterSpace}px`;
-    } else {
-      item.style.left = `${cardWidthAndGutterSpace * 2}px`;
-    }
+    item.style.transform = `translateX(${cardWidth * index}px)`;
+    // if (index !== 0) {
+    //   item.style.paddingLeft = "200px";
+    // }
   });
 
   const rightAngleButton = document.getElementById("right-angle");
@@ -25,8 +19,10 @@ document.addEventListener("DOMContentLoaded", () => {
   rightAngleButton.addEventListener("click", () => {
     if (counter > 1) {
       cards.forEach(item => {
-        item.style.left = `${parseInt(item.style.left, 10) +
-          cardWidthAndGutterSpace}px`;
+        let newTranslateXValue =
+          parseInt(item.style.transform.replace(/[^\d.-]/g, ""), 10) +
+          cardWidth;
+        item.style.transform = `translateX(${newTranslateXValue}px)`;
       });
       counter--;
     }
@@ -34,9 +30,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   leftAngleButton.addEventListener("click", () => {
     if (counter < cards.length) {
-      cards.forEach(item => {
-        item.style.left = `${parseInt(item.style.left, 10) -
-          cardWidthAndGutterSpace}px`;
+      cards.forEach((item, index) => {
+        let newTranslateXValue =
+          parseInt(item.style.transform.replace(/[^\d.-]/g, ""), 10) -
+          cardWidth;
+        item.style.transform = `translateX(${newTranslateXValue}px)`;
+        // if (index === counter) {
+        //   item.style.paddingLeft = "0px";
+        // }
       });
       counter++;
     }
