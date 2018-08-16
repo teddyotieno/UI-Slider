@@ -10,21 +10,71 @@ a {
   text-decoration: none;
 }
 
-body {
-  background: orange;
+button {
+  outline: none;
+  border: none;
+  cursor: pointer;
 }
 
-.c-nav {
+nav {
   padding: 20px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  .logo {
+    h1 {
+      font-family: "Teko", sans-serif;
+      text-transform: uppercase;
+      font-size: 48px;
+    }
+  }
   .nav-links {
     a {
       font-family: "Reem Kufi", sans-serif;
-      font-size: 18px;
       color: #080808;
       padding: 0 15px;
+      font-size: 20px;
+    }
+  }
+}
+
+.slide-wrapper {
+  display: flex;
+  .controls,
+  .other-controls {
+    flex-basis: 5%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .controls {
+    button {
+      width: 100%;
+      padding: 20px 0;
+    }
+    button:first-child {
+      border-bottom: 1px solid rgb(211, 211, 211);
+    }
+  }
+  #container {
+    flex-grow: 1;
+    height: 80vh;
+    position: relative;
+    overflow: hidden;
+    .card {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .card:nth-child(1) {
+      background: #c0c0c0;
+    }
+    .card:nth-child(2) {
+      background: #ebe7e4;
+    }
+    .card:nth-child(3) {
+      background: #c3c9d4;
     }
   }
 }
