@@ -1,8 +1,9 @@
 import styles from "../sass/app.scss";
 
 document.addEventListener("DOMContentLoaded", () => {
-  let cards = document.querySelectorAll("div.card");
-  let parentContainerWidth = document.getElementById("container").offsetWidth;
+  const cards = document.querySelectorAll("div.card");
+  const parentContainerWidth = document.getElementById("container").offsetWidth;
+  let counter = 1;
 
   // create initial state for the elements
   cards.forEach((item, index) => {
@@ -19,16 +20,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const leftAngleButton = document.getElementById("left-angle");
 
   rightAngleButton.addEventListener("click", () => {
-    cards.forEach(item => {
-      item.style.left = `${parseInt(item.style.left, 10) +
-        parentContainerWidth}px`;
-    });
+    if (counter > 1) {
+      cards.forEach(item => {
+        item.style.left = `${parseInt(item.style.left, 10) +
+          parentContainerWidth}px`;
+      });
+      counter--;
+    }
   });
 
   leftAngleButton.addEventListener("click", () => {
-    cards.forEach(item => {
-      item.style.left = `${parseInt(item.style.left, 10) -
-        parentContainerWidth}px`;
-    });
+    if (counter < cards.length) {
+      cards.forEach(item => {
+        item.style.left = `${parseInt(item.style.left, 10) -
+          parentContainerWidth}px`;
+      });
+      counter++;
+    }
   });
 });
