@@ -1,6 +1,9 @@
 import styles from "../sass/app.scss";
 
-document.addEventListener("DOMContentLoaded", () => {
+window.onload = function() {
+  // prevent FOUC phenomena
+  document.querySelector(".no-fouc").classList.remove("no-fouc");
+
   const cards = document.querySelectorAll("div.card-wrapper");
   const cardWidth = document.getElementById("container").offsetWidth;
   let counter = 1;
@@ -51,4 +54,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   showCurrentCardNumber(counter);
   toggleCardsFunctionality();
-});
+};
