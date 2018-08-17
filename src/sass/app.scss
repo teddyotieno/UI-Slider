@@ -111,8 +111,10 @@ main {
 
 .card {
   height: 100%;
-
   position: relative;
+  display: flex;
+  .img.container {
+  }
   footer {
     position: absolute;
     bottom: 0;
