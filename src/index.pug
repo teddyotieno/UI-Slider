@@ -1,11 +1,11 @@
 doctype html
-html 
+html
     head
         meta(charset='utf-8')
         meta(http-equiv='X-UA-Compatible', content='IE=edge')
         meta(name='viewport', content='width=device-width, initial-scale=1')
         link(rel="stylesheet", href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous")
-    body
+    body.no-fouc
         include includes/nav
         main
             .slide-wrapper
@@ -15,9 +15,43 @@ html
                     button#left-angle
                         .fas.fa-angle-left.fa-2x
                 #container
-                    .card
-                    .card
-                    .card
+                    .card-wrapper
+                        .card.grey
+                            .img-container
+                                img(src='/assets/img1.png')
+                            .product-details
+                                h1 Aedle
+                            footer
+                                button.discover-more Discover More
+                                    .fas.fa-angle-right.fa-2x
+                    .card-wrapper
+                        .card.cream
+                            .img-container                            
+                                img(src='/assets/img2.png')
+                            .product-details
+                                h1 Aedle
+                            footer
+                                button.discover-more Discover More
+                                    .fas.fa-angle-right.fa-2x
+                    .card-wrapper
+                        .card.blue
+                            .img-container
+                                img(src='/assets/img3.png')
+                            .product-details
+                                h1 Bang and Olufsen
+                            footer
+                                button.discover-more Discover More
+                                    .fas.fa-angle-right.fa-2x
+                                    
                 .other-controls
+                    .card-number
+                        p#card-number 
+                        p 03
+                    .social-media-icons
+                        .fab.fa-twitter.fa-1x
+                        .fab.fa-pinterest.fa-1x
+                        .fab.fa-facebook-f.fa-1x
+                        .fab.fa-instagram.fa-1x
+
     
             
