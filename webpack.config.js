@@ -5,7 +5,7 @@ const config = {
   mode: "development",
   entry: "./src/js/app.js",
   output: {
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "docs"),
     filename: "bundle.js"
   },
   plugins: [
