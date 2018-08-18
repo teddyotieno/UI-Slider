@@ -1,706 +1,4 @@
 /******/ (function(modules) { // webpackBootstrap
-/******/ 	function hotDisposeChunk(chunkId) {
-/******/ 		delete installedChunks[chunkId];
-/******/ 	}
-/******/ 	var parentHotUpdateCallback = window["webpackHotUpdate"];
-/******/ 	window["webpackHotUpdate"] = // eslint-disable-next-line no-unused-vars
-/******/ 	function webpackHotUpdateCallback(chunkId, moreModules) {
-/******/ 		hotAddUpdateChunk(chunkId, moreModules);
-/******/ 		if (parentHotUpdateCallback) parentHotUpdateCallback(chunkId, moreModules);
-/******/ 	} ;
-/******/
-/******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	function hotDownloadUpdateChunk(chunkId) {
-/******/ 		var head = document.getElementsByTagName("head")[0];
-/******/ 		var script = document.createElement("script");
-/******/ 		script.charset = "utf-8";
-/******/ 		script.src = __webpack_require__.p + "" + chunkId + "." + hotCurrentHash + ".hot-update.js";
-/******/ 		;
-/******/ 		head.appendChild(script);
-/******/ 	}
-/******/
-/******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	function hotDownloadManifest(requestTimeout) {
-/******/ 		requestTimeout = requestTimeout || 10000;
-/******/ 		return new Promise(function(resolve, reject) {
-/******/ 			if (typeof XMLHttpRequest === "undefined") {
-/******/ 				return reject(new Error("No browser support"));
-/******/ 			}
-/******/ 			try {
-/******/ 				var request = new XMLHttpRequest();
-/******/ 				var requestPath = __webpack_require__.p + "" + hotCurrentHash + ".hot-update.json";
-/******/ 				request.open("GET", requestPath, true);
-/******/ 				request.timeout = requestTimeout;
-/******/ 				request.send(null);
-/******/ 			} catch (err) {
-/******/ 				return reject(err);
-/******/ 			}
-/******/ 			request.onreadystatechange = function() {
-/******/ 				if (request.readyState !== 4) return;
-/******/ 				if (request.status === 0) {
-/******/ 					// timeout
-/******/ 					reject(
-/******/ 						new Error("Manifest request to " + requestPath + " timed out.")
-/******/ 					);
-/******/ 				} else if (request.status === 404) {
-/******/ 					// no update available
-/******/ 					resolve();
-/******/ 				} else if (request.status !== 200 && request.status !== 304) {
-/******/ 					// other failure
-/******/ 					reject(new Error("Manifest request to " + requestPath + " failed."));
-/******/ 				} else {
-/******/ 					// success
-/******/ 					try {
-/******/ 						var update = JSON.parse(request.responseText);
-/******/ 					} catch (e) {
-/******/ 						reject(e);
-/******/ 						return;
-/******/ 					}
-/******/ 					resolve(update);
-/******/ 				}
-/******/ 			};
-/******/ 		});
-/******/ 	}
-/******/
-/******/ 	var hotApplyOnUpdate = true;
-/******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "6d983f5dbdc4c663eaa0";
-/******/ 	var hotRequestTimeout = 10000;
-/******/ 	var hotCurrentModuleData = {};
-/******/ 	var hotCurrentChildModule;
-/******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentParents = [];
-/******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentParentsTemp = [];
-/******/
-/******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	function hotCreateRequire(moduleId) {
-/******/ 		var me = installedModules[moduleId];
-/******/ 		if (!me) return __webpack_require__;
-/******/ 		var fn = function(request) {
-/******/ 			if (me.hot.active) {
-/******/ 				if (installedModules[request]) {
-/******/ 					if (installedModules[request].parents.indexOf(moduleId) === -1) {
-/******/ 						installedModules[request].parents.push(moduleId);
-/******/ 					}
-/******/ 				} else {
-/******/ 					hotCurrentParents = [moduleId];
-/******/ 					hotCurrentChildModule = request;
-/******/ 				}
-/******/ 				if (me.children.indexOf(request) === -1) {
-/******/ 					me.children.push(request);
-/******/ 				}
-/******/ 			} else {
-/******/ 				console.warn(
-/******/ 					"[HMR] unexpected require(" +
-/******/ 						request +
-/******/ 						") from disposed module " +
-/******/ 						moduleId
-/******/ 				);
-/******/ 				hotCurrentParents = [];
-/******/ 			}
-/******/ 			return __webpack_require__(request);
-/******/ 		};
-/******/ 		var ObjectFactory = function ObjectFactory(name) {
-/******/ 			return {
-/******/ 				configurable: true,
-/******/ 				enumerable: true,
-/******/ 				get: function() {
-/******/ 					return __webpack_require__[name];
-/******/ 				},
-/******/ 				set: function(value) {
-/******/ 					__webpack_require__[name] = value;
-/******/ 				}
-/******/ 			};
-/******/ 		};
-/******/ 		for (var name in __webpack_require__) {
-/******/ 			if (
-/******/ 				Object.prototype.hasOwnProperty.call(__webpack_require__, name) &&
-/******/ 				name !== "e" &&
-/******/ 				name !== "t"
-/******/ 			) {
-/******/ 				Object.defineProperty(fn, name, ObjectFactory(name));
-/******/ 			}
-/******/ 		}
-/******/ 		fn.e = function(chunkId) {
-/******/ 			if (hotStatus === "ready") hotSetStatus("prepare");
-/******/ 			hotChunksLoading++;
-/******/ 			return __webpack_require__.e(chunkId).then(finishChunkLoading, function(err) {
-/******/ 				finishChunkLoading();
-/******/ 				throw err;
-/******/ 			});
-/******/
-/******/ 			function finishChunkLoading() {
-/******/ 				hotChunksLoading--;
-/******/ 				if (hotStatus === "prepare") {
-/******/ 					if (!hotWaitingFilesMap[chunkId]) {
-/******/ 						hotEnsureUpdateChunk(chunkId);
-/******/ 					}
-/******/ 					if (hotChunksLoading === 0 && hotWaitingFiles === 0) {
-/******/ 						hotUpdateDownloaded();
-/******/ 					}
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 		fn.t = function(value, mode) {
-/******/ 			if (mode & 1) value = fn(value);
-/******/ 			return __webpack_require__.t(value, mode & ~1);
-/******/ 		};
-/******/ 		return fn;
-/******/ 	}
-/******/
-/******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	function hotCreateModule(moduleId) {
-/******/ 		var hot = {
-/******/ 			// private stuff
-/******/ 			_acceptedDependencies: {},
-/******/ 			_declinedDependencies: {},
-/******/ 			_selfAccepted: false,
-/******/ 			_selfDeclined: false,
-/******/ 			_disposeHandlers: [],
-/******/ 			_main: hotCurrentChildModule !== moduleId,
-/******/
-/******/ 			// Module API
-/******/ 			active: true,
-/******/ 			accept: function(dep, callback) {
-/******/ 				if (typeof dep === "undefined") hot._selfAccepted = true;
-/******/ 				else if (typeof dep === "function") hot._selfAccepted = dep;
-/******/ 				else if (typeof dep === "object")
-/******/ 					for (var i = 0; i < dep.length; i++)
-/******/ 						hot._acceptedDependencies[dep[i]] = callback || function() {};
-/******/ 				else hot._acceptedDependencies[dep] = callback || function() {};
-/******/ 			},
-/******/ 			decline: function(dep) {
-/******/ 				if (typeof dep === "undefined") hot._selfDeclined = true;
-/******/ 				else if (typeof dep === "object")
-/******/ 					for (var i = 0; i < dep.length; i++)
-/******/ 						hot._declinedDependencies[dep[i]] = true;
-/******/ 				else hot._declinedDependencies[dep] = true;
-/******/ 			},
-/******/ 			dispose: function(callback) {
-/******/ 				hot._disposeHandlers.push(callback);
-/******/ 			},
-/******/ 			addDisposeHandler: function(callback) {
-/******/ 				hot._disposeHandlers.push(callback);
-/******/ 			},
-/******/ 			removeDisposeHandler: function(callback) {
-/******/ 				var idx = hot._disposeHandlers.indexOf(callback);
-/******/ 				if (idx >= 0) hot._disposeHandlers.splice(idx, 1);
-/******/ 			},
-/******/
-/******/ 			// Management API
-/******/ 			check: hotCheck,
-/******/ 			apply: hotApply,
-/******/ 			status: function(l) {
-/******/ 				if (!l) return hotStatus;
-/******/ 				hotStatusHandlers.push(l);
-/******/ 			},
-/******/ 			addStatusHandler: function(l) {
-/******/ 				hotStatusHandlers.push(l);
-/******/ 			},
-/******/ 			removeStatusHandler: function(l) {
-/******/ 				var idx = hotStatusHandlers.indexOf(l);
-/******/ 				if (idx >= 0) hotStatusHandlers.splice(idx, 1);
-/******/ 			},
-/******/
-/******/ 			//inherit from previous dispose call
-/******/ 			data: hotCurrentModuleData[moduleId]
-/******/ 		};
-/******/ 		hotCurrentChildModule = undefined;
-/******/ 		return hot;
-/******/ 	}
-/******/
-/******/ 	var hotStatusHandlers = [];
-/******/ 	var hotStatus = "idle";
-/******/
-/******/ 	function hotSetStatus(newStatus) {
-/******/ 		hotStatus = newStatus;
-/******/ 		for (var i = 0; i < hotStatusHandlers.length; i++)
-/******/ 			hotStatusHandlers[i].call(null, newStatus);
-/******/ 	}
-/******/
-/******/ 	// while downloading
-/******/ 	var hotWaitingFiles = 0;
-/******/ 	var hotChunksLoading = 0;
-/******/ 	var hotWaitingFilesMap = {};
-/******/ 	var hotRequestedFilesMap = {};
-/******/ 	var hotAvailableFilesMap = {};
-/******/ 	var hotDeferred;
-/******/
-/******/ 	// The update info
-/******/ 	var hotUpdate, hotUpdateNewHash;
-/******/
-/******/ 	function toModuleId(id) {
-/******/ 		var isNumber = +id + "" === id;
-/******/ 		return isNumber ? +id : id;
-/******/ 	}
-/******/
-/******/ 	function hotCheck(apply) {
-/******/ 		if (hotStatus !== "idle") {
-/******/ 			throw new Error("check() is only allowed in idle status");
-/******/ 		}
-/******/ 		hotApplyOnUpdate = apply;
-/******/ 		hotSetStatus("check");
-/******/ 		return hotDownloadManifest(hotRequestTimeout).then(function(update) {
-/******/ 			if (!update) {
-/******/ 				hotSetStatus("idle");
-/******/ 				return null;
-/******/ 			}
-/******/ 			hotRequestedFilesMap = {};
-/******/ 			hotWaitingFilesMap = {};
-/******/ 			hotAvailableFilesMap = update.c;
-/******/ 			hotUpdateNewHash = update.h;
-/******/
-/******/ 			hotSetStatus("prepare");
-/******/ 			var promise = new Promise(function(resolve, reject) {
-/******/ 				hotDeferred = {
-/******/ 					resolve: resolve,
-/******/ 					reject: reject
-/******/ 				};
-/******/ 			});
-/******/ 			hotUpdate = {};
-/******/ 			var chunkId = "main";
-/******/ 			// eslint-disable-next-line no-lone-blocks
-/******/ 			{
-/******/ 				/*globals chunkId */
-/******/ 				hotEnsureUpdateChunk(chunkId);
-/******/ 			}
-/******/ 			if (
-/******/ 				hotStatus === "prepare" &&
-/******/ 				hotChunksLoading === 0 &&
-/******/ 				hotWaitingFiles === 0
-/******/ 			) {
-/******/ 				hotUpdateDownloaded();
-/******/ 			}
-/******/ 			return promise;
-/******/ 		});
-/******/ 	}
-/******/
-/******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	function hotAddUpdateChunk(chunkId, moreModules) {
-/******/ 		if (!hotAvailableFilesMap[chunkId] || !hotRequestedFilesMap[chunkId])
-/******/ 			return;
-/******/ 		hotRequestedFilesMap[chunkId] = false;
-/******/ 		for (var moduleId in moreModules) {
-/******/ 			if (Object.prototype.hasOwnProperty.call(moreModules, moduleId)) {
-/******/ 				hotUpdate[moduleId] = moreModules[moduleId];
-/******/ 			}
-/******/ 		}
-/******/ 		if (--hotWaitingFiles === 0 && hotChunksLoading === 0) {
-/******/ 			hotUpdateDownloaded();
-/******/ 		}
-/******/ 	}
-/******/
-/******/ 	function hotEnsureUpdateChunk(chunkId) {
-/******/ 		if (!hotAvailableFilesMap[chunkId]) {
-/******/ 			hotWaitingFilesMap[chunkId] = true;
-/******/ 		} else {
-/******/ 			hotRequestedFilesMap[chunkId] = true;
-/******/ 			hotWaitingFiles++;
-/******/ 			hotDownloadUpdateChunk(chunkId);
-/******/ 		}
-/******/ 	}
-/******/
-/******/ 	function hotUpdateDownloaded() {
-/******/ 		hotSetStatus("ready");
-/******/ 		var deferred = hotDeferred;
-/******/ 		hotDeferred = null;
-/******/ 		if (!deferred) return;
-/******/ 		if (hotApplyOnUpdate) {
-/******/ 			// Wrap deferred object in Promise to mark it as a well-handled Promise to
-/******/ 			// avoid triggering uncaught exception warning in Chrome.
-/******/ 			// See https://bugs.chromium.org/p/chromium/issues/detail?id=465666
-/******/ 			Promise.resolve()
-/******/ 				.then(function() {
-/******/ 					return hotApply(hotApplyOnUpdate);
-/******/ 				})
-/******/ 				.then(
-/******/ 					function(result) {
-/******/ 						deferred.resolve(result);
-/******/ 					},
-/******/ 					function(err) {
-/******/ 						deferred.reject(err);
-/******/ 					}
-/******/ 				);
-/******/ 		} else {
-/******/ 			var outdatedModules = [];
-/******/ 			for (var id in hotUpdate) {
-/******/ 				if (Object.prototype.hasOwnProperty.call(hotUpdate, id)) {
-/******/ 					outdatedModules.push(toModuleId(id));
-/******/ 				}
-/******/ 			}
-/******/ 			deferred.resolve(outdatedModules);
-/******/ 		}
-/******/ 	}
-/******/
-/******/ 	function hotApply(options) {
-/******/ 		if (hotStatus !== "ready")
-/******/ 			throw new Error("apply() is only allowed in ready status");
-/******/ 		options = options || {};
-/******/
-/******/ 		var cb;
-/******/ 		var i;
-/******/ 		var j;
-/******/ 		var module;
-/******/ 		var moduleId;
-/******/
-/******/ 		function getAffectedStuff(updateModuleId) {
-/******/ 			var outdatedModules = [updateModuleId];
-/******/ 			var outdatedDependencies = {};
-/******/
-/******/ 			var queue = outdatedModules.slice().map(function(id) {
-/******/ 				return {
-/******/ 					chain: [id],
-/******/ 					id: id
-/******/ 				};
-/******/ 			});
-/******/ 			while (queue.length > 0) {
-/******/ 				var queueItem = queue.pop();
-/******/ 				var moduleId = queueItem.id;
-/******/ 				var chain = queueItem.chain;
-/******/ 				module = installedModules[moduleId];
-/******/ 				if (!module || module.hot._selfAccepted) continue;
-/******/ 				if (module.hot._selfDeclined) {
-/******/ 					return {
-/******/ 						type: "self-declined",
-/******/ 						chain: chain,
-/******/ 						moduleId: moduleId
-/******/ 					};
-/******/ 				}
-/******/ 				if (module.hot._main) {
-/******/ 					return {
-/******/ 						type: "unaccepted",
-/******/ 						chain: chain,
-/******/ 						moduleId: moduleId
-/******/ 					};
-/******/ 				}
-/******/ 				for (var i = 0; i < module.parents.length; i++) {
-/******/ 					var parentId = module.parents[i];
-/******/ 					var parent = installedModules[parentId];
-/******/ 					if (!parent) continue;
-/******/ 					if (parent.hot._declinedDependencies[moduleId]) {
-/******/ 						return {
-/******/ 							type: "declined",
-/******/ 							chain: chain.concat([parentId]),
-/******/ 							moduleId: moduleId,
-/******/ 							parentId: parentId
-/******/ 						};
-/******/ 					}
-/******/ 					if (outdatedModules.indexOf(parentId) !== -1) continue;
-/******/ 					if (parent.hot._acceptedDependencies[moduleId]) {
-/******/ 						if (!outdatedDependencies[parentId])
-/******/ 							outdatedDependencies[parentId] = [];
-/******/ 						addAllToSet(outdatedDependencies[parentId], [moduleId]);
-/******/ 						continue;
-/******/ 					}
-/******/ 					delete outdatedDependencies[parentId];
-/******/ 					outdatedModules.push(parentId);
-/******/ 					queue.push({
-/******/ 						chain: chain.concat([parentId]),
-/******/ 						id: parentId
-/******/ 					});
-/******/ 				}
-/******/ 			}
-/******/
-/******/ 			return {
-/******/ 				type: "accepted",
-/******/ 				moduleId: updateModuleId,
-/******/ 				outdatedModules: outdatedModules,
-/******/ 				outdatedDependencies: outdatedDependencies
-/******/ 			};
-/******/ 		}
-/******/
-/******/ 		function addAllToSet(a, b) {
-/******/ 			for (var i = 0; i < b.length; i++) {
-/******/ 				var item = b[i];
-/******/ 				if (a.indexOf(item) === -1) a.push(item);
-/******/ 			}
-/******/ 		}
-/******/
-/******/ 		// at begin all updates modules are outdated
-/******/ 		// the "outdated" status can propagate to parents if they don't accept the children
-/******/ 		var outdatedDependencies = {};
-/******/ 		var outdatedModules = [];
-/******/ 		var appliedUpdate = {};
-/******/
-/******/ 		var warnUnexpectedRequire = function warnUnexpectedRequire() {
-/******/ 			console.warn(
-/******/ 				"[HMR] unexpected require(" + result.moduleId + ") to disposed module"
-/******/ 			);
-/******/ 		};
-/******/
-/******/ 		for (var id in hotUpdate) {
-/******/ 			if (Object.prototype.hasOwnProperty.call(hotUpdate, id)) {
-/******/ 				moduleId = toModuleId(id);
-/******/ 				/** @type {TODO} */
-/******/ 				var result;
-/******/ 				if (hotUpdate[id]) {
-/******/ 					result = getAffectedStuff(moduleId);
-/******/ 				} else {
-/******/ 					result = {
-/******/ 						type: "disposed",
-/******/ 						moduleId: id
-/******/ 					};
-/******/ 				}
-/******/ 				/** @type {Error|false} */
-/******/ 				var abortError = false;
-/******/ 				var doApply = false;
-/******/ 				var doDispose = false;
-/******/ 				var chainInfo = "";
-/******/ 				if (result.chain) {
-/******/ 					chainInfo = "\nUpdate propagation: " + result.chain.join(" -> ");
-/******/ 				}
-/******/ 				switch (result.type) {
-/******/ 					case "self-declined":
-/******/ 						if (options.onDeclined) options.onDeclined(result);
-/******/ 						if (!options.ignoreDeclined)
-/******/ 							abortError = new Error(
-/******/ 								"Aborted because of self decline: " +
-/******/ 									result.moduleId +
-/******/ 									chainInfo
-/******/ 							);
-/******/ 						break;
-/******/ 					case "declined":
-/******/ 						if (options.onDeclined) options.onDeclined(result);
-/******/ 						if (!options.ignoreDeclined)
-/******/ 							abortError = new Error(
-/******/ 								"Aborted because of declined dependency: " +
-/******/ 									result.moduleId +
-/******/ 									" in " +
-/******/ 									result.parentId +
-/******/ 									chainInfo
-/******/ 							);
-/******/ 						break;
-/******/ 					case "unaccepted":
-/******/ 						if (options.onUnaccepted) options.onUnaccepted(result);
-/******/ 						if (!options.ignoreUnaccepted)
-/******/ 							abortError = new Error(
-/******/ 								"Aborted because " + moduleId + " is not accepted" + chainInfo
-/******/ 							);
-/******/ 						break;
-/******/ 					case "accepted":
-/******/ 						if (options.onAccepted) options.onAccepted(result);
-/******/ 						doApply = true;
-/******/ 						break;
-/******/ 					case "disposed":
-/******/ 						if (options.onDisposed) options.onDisposed(result);
-/******/ 						doDispose = true;
-/******/ 						break;
-/******/ 					default:
-/******/ 						throw new Error("Unexception type " + result.type);
-/******/ 				}
-/******/ 				if (abortError) {
-/******/ 					hotSetStatus("abort");
-/******/ 					return Promise.reject(abortError);
-/******/ 				}
-/******/ 				if (doApply) {
-/******/ 					appliedUpdate[moduleId] = hotUpdate[moduleId];
-/******/ 					addAllToSet(outdatedModules, result.outdatedModules);
-/******/ 					for (moduleId in result.outdatedDependencies) {
-/******/ 						if (
-/******/ 							Object.prototype.hasOwnProperty.call(
-/******/ 								result.outdatedDependencies,
-/******/ 								moduleId
-/******/ 							)
-/******/ 						) {
-/******/ 							if (!outdatedDependencies[moduleId])
-/******/ 								outdatedDependencies[moduleId] = [];
-/******/ 							addAllToSet(
-/******/ 								outdatedDependencies[moduleId],
-/******/ 								result.outdatedDependencies[moduleId]
-/******/ 							);
-/******/ 						}
-/******/ 					}
-/******/ 				}
-/******/ 				if (doDispose) {
-/******/ 					addAllToSet(outdatedModules, [result.moduleId]);
-/******/ 					appliedUpdate[moduleId] = warnUnexpectedRequire;
-/******/ 				}
-/******/ 			}
-/******/ 		}
-/******/
-/******/ 		// Store self accepted outdated modules to require them later by the module system
-/******/ 		var outdatedSelfAcceptedModules = [];
-/******/ 		for (i = 0; i < outdatedModules.length; i++) {
-/******/ 			moduleId = outdatedModules[i];
-/******/ 			if (
-/******/ 				installedModules[moduleId] &&
-/******/ 				installedModules[moduleId].hot._selfAccepted
-/******/ 			)
-/******/ 				outdatedSelfAcceptedModules.push({
-/******/ 					module: moduleId,
-/******/ 					errorHandler: installedModules[moduleId].hot._selfAccepted
-/******/ 				});
-/******/ 		}
-/******/
-/******/ 		// Now in "dispose" phase
-/******/ 		hotSetStatus("dispose");
-/******/ 		Object.keys(hotAvailableFilesMap).forEach(function(chunkId) {
-/******/ 			if (hotAvailableFilesMap[chunkId] === false) {
-/******/ 				hotDisposeChunk(chunkId);
-/******/ 			}
-/******/ 		});
-/******/
-/******/ 		var idx;
-/******/ 		var queue = outdatedModules.slice();
-/******/ 		while (queue.length > 0) {
-/******/ 			moduleId = queue.pop();
-/******/ 			module = installedModules[moduleId];
-/******/ 			if (!module) continue;
-/******/
-/******/ 			var data = {};
-/******/
-/******/ 			// Call dispose handlers
-/******/ 			var disposeHandlers = module.hot._disposeHandlers;
-/******/ 			for (j = 0; j < disposeHandlers.length; j++) {
-/******/ 				cb = disposeHandlers[j];
-/******/ 				cb(data);
-/******/ 			}
-/******/ 			hotCurrentModuleData[moduleId] = data;
-/******/
-/******/ 			// disable module (this disables requires from this module)
-/******/ 			module.hot.active = false;
-/******/
-/******/ 			// remove module from cache
-/******/ 			delete installedModules[moduleId];
-/******/
-/******/ 			// when disposing there is no need to call dispose handler
-/******/ 			delete outdatedDependencies[moduleId];
-/******/
-/******/ 			// remove "parents" references from all children
-/******/ 			for (j = 0; j < module.children.length; j++) {
-/******/ 				var child = installedModules[module.children[j]];
-/******/ 				if (!child) continue;
-/******/ 				idx = child.parents.indexOf(moduleId);
-/******/ 				if (idx >= 0) {
-/******/ 					child.parents.splice(idx, 1);
-/******/ 				}
-/******/ 			}
-/******/ 		}
-/******/
-/******/ 		// remove outdated dependency from module children
-/******/ 		var dependency;
-/******/ 		var moduleOutdatedDependencies;
-/******/ 		for (moduleId in outdatedDependencies) {
-/******/ 			if (
-/******/ 				Object.prototype.hasOwnProperty.call(outdatedDependencies, moduleId)
-/******/ 			) {
-/******/ 				module = installedModules[moduleId];
-/******/ 				if (module) {
-/******/ 					moduleOutdatedDependencies = outdatedDependencies[moduleId];
-/******/ 					for (j = 0; j < moduleOutdatedDependencies.length; j++) {
-/******/ 						dependency = moduleOutdatedDependencies[j];
-/******/ 						idx = module.children.indexOf(dependency);
-/******/ 						if (idx >= 0) module.children.splice(idx, 1);
-/******/ 					}
-/******/ 				}
-/******/ 			}
-/******/ 		}
-/******/
-/******/ 		// Not in "apply" phase
-/******/ 		hotSetStatus("apply");
-/******/
-/******/ 		hotCurrentHash = hotUpdateNewHash;
-/******/
-/******/ 		// insert new code
-/******/ 		for (moduleId in appliedUpdate) {
-/******/ 			if (Object.prototype.hasOwnProperty.call(appliedUpdate, moduleId)) {
-/******/ 				modules[moduleId] = appliedUpdate[moduleId];
-/******/ 			}
-/******/ 		}
-/******/
-/******/ 		// call accept handlers
-/******/ 		var error = null;
-/******/ 		for (moduleId in outdatedDependencies) {
-/******/ 			if (
-/******/ 				Object.prototype.hasOwnProperty.call(outdatedDependencies, moduleId)
-/******/ 			) {
-/******/ 				module = installedModules[moduleId];
-/******/ 				if (module) {
-/******/ 					moduleOutdatedDependencies = outdatedDependencies[moduleId];
-/******/ 					var callbacks = [];
-/******/ 					for (i = 0; i < moduleOutdatedDependencies.length; i++) {
-/******/ 						dependency = moduleOutdatedDependencies[i];
-/******/ 						cb = module.hot._acceptedDependencies[dependency];
-/******/ 						if (cb) {
-/******/ 							if (callbacks.indexOf(cb) !== -1) continue;
-/******/ 							callbacks.push(cb);
-/******/ 						}
-/******/ 					}
-/******/ 					for (i = 0; i < callbacks.length; i++) {
-/******/ 						cb = callbacks[i];
-/******/ 						try {
-/******/ 							cb(moduleOutdatedDependencies);
-/******/ 						} catch (err) {
-/******/ 							if (options.onErrored) {
-/******/ 								options.onErrored({
-/******/ 									type: "accept-errored",
-/******/ 									moduleId: moduleId,
-/******/ 									dependencyId: moduleOutdatedDependencies[i],
-/******/ 									error: err
-/******/ 								});
-/******/ 							}
-/******/ 							if (!options.ignoreErrored) {
-/******/ 								if (!error) error = err;
-/******/ 							}
-/******/ 						}
-/******/ 					}
-/******/ 				}
-/******/ 			}
-/******/ 		}
-/******/
-/******/ 		// Load self accepted modules
-/******/ 		for (i = 0; i < outdatedSelfAcceptedModules.length; i++) {
-/******/ 			var item = outdatedSelfAcceptedModules[i];
-/******/ 			moduleId = item.module;
-/******/ 			hotCurrentParents = [moduleId];
-/******/ 			try {
-/******/ 				__webpack_require__(moduleId);
-/******/ 			} catch (err) {
-/******/ 				if (typeof item.errorHandler === "function") {
-/******/ 					try {
-/******/ 						item.errorHandler(err);
-/******/ 					} catch (err2) {
-/******/ 						if (options.onErrored) {
-/******/ 							options.onErrored({
-/******/ 								type: "self-accept-error-handler-errored",
-/******/ 								moduleId: moduleId,
-/******/ 								error: err2,
-/******/ 								originalError: err
-/******/ 							});
-/******/ 						}
-/******/ 						if (!options.ignoreErrored) {
-/******/ 							if (!error) error = err2;
-/******/ 						}
-/******/ 						if (!error) error = err;
-/******/ 					}
-/******/ 				} else {
-/******/ 					if (options.onErrored) {
-/******/ 						options.onErrored({
-/******/ 							type: "self-accept-errored",
-/******/ 							moduleId: moduleId,
-/******/ 							error: err
-/******/ 						});
-/******/ 					}
-/******/ 					if (!options.ignoreErrored) {
-/******/ 						if (!error) error = err;
-/******/ 					}
-/******/ 				}
-/******/ 			}
-/******/ 		}
-/******/
-/******/ 		// handle errors in accept handlers and self accepted module load
-/******/ 		if (error) {
-/******/ 			hotSetStatus("fail");
-/******/ 			return Promise.reject(error);
-/******/ 		}
-/******/
-/******/ 		hotSetStatus("idle");
-/******/ 		return new Promise(function(resolve) {
-/******/ 			resolve(outdatedModules);
-/******/ 		});
-/******/ 	}
-/******/
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -715,14 +13,11 @@
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
 /******/ 			l: false,
-/******/ 			exports: {},
-/******/ 			hot: hotCreateModule(moduleId),
-/******/ 			parents: (hotCurrentParentsTemp = hotCurrentParents, hotCurrentParents = [], hotCurrentParentsTemp),
-/******/ 			children: []
+/******/ 			exports: {}
 /******/ 		};
 /******/
 /******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, hotCreateRequire(moduleId));
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
 /******/
 /******/ 		// Flag the module as loaded
 /******/ 		module.l = true;
@@ -784,24 +79,32 @@
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
 /******/
-/******/ 	// __webpack_hash__
-/******/ 	__webpack_require__.h = function() { return hotCurrentHash; };
-/******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return hotCreateRequire("./src/js/app.js")(__webpack_require__.s = "./src/js/app.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/js/app.js");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./node_modules/css-loader/index.js!./node_modules/postcss-loader/lib/index.js!./node_modules/sass-loader/lib/loader.js!./src/sass/app.scss":
-/*!********************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader!./node_modules/postcss-loader/lib!./node_modules/sass-loader/lib/loader.js!./src/sass/app.scss ***!
-  \********************************************************************************************************************************/
+/***/ "./assets/img1_1.png":
+/*!***************************!*\
+  !*** ./assets/img1_1.png ***!
+  \***************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/lib/css-base.js */ \"./node_modules/css-loader/lib/css-base.js\")(false);\n// imports\nexports.push([module.i, \"@import url(https://fonts.googleapis.com/css?family=Reem+Kufi|Teko);\", \"\"]);\n\n// module\nexports.push([module.i, \".logo-heading {\\n  text-transform: uppercase;\\n  font-size: 48px;\\n  font-family: \\\"Teko\\\", sans-serif; }\\n\\n.l-flex-space-between {\\n  display: flex;\\n  justify-content: space-between; }\\n\\n.c-nav {\\n  padding: 20px 30px;\\n  display: flex;\\n  justify-content: space-between;\\n  align-items: center; }\\n  .c-nav .nav-links a {\\n    font-family: \\\"Reem Kufi\\\", sans-serif;\\n    font-size: 18px;\\n    color: #080808;\\n    padding: 0 15px; }\\n\\n* {\\n  box-sizing: border-box;\\n  margin: 0;\\n  padding: 0; }\\n\\na {\\n  text-decoration: none; }\\n\\nbody {\\n  background: #fff; }\\n\", \"\"]);\n\n// exports\n\n\n//# sourceURL=webpack:///./src/sass/app.scss?./node_modules/css-loader!./node_modules/postcss-loader/lib!./node_modules/sass-loader/lib/loader.js");
+eval("module.exports = __webpack_require__.p + \"711dbbd14b5889d977e802c331642752.png\";\n\n//# sourceURL=webpack:///./assets/img1_1.png?");
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./src/sass/app.scss":
+/*!**********************************************************************************************!*\
+  !*** ./node_modules/css-loader!./node_modules/sass-loader/lib/loader.js!./src/sass/app.scss ***!
+  \**********************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var escape = __webpack_require__(/*! ../../node_modules/css-loader/lib/url/escape.js */ \"./node_modules/css-loader/lib/url/escape.js\");\nexports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/lib/css-base.js */ \"./node_modules/css-loader/lib/css-base.js\")(false);\n// imports\nexports.push([module.i, \"@import url(https://fonts.googleapis.com/css?family=Reem+Kufi|Teko);\", \"\"]);\n\n// module\nexports.push([module.i, \"* {\\n  box-sizing: border-box;\\n  padding: 0;\\n  margin: 0; }\\n\\na {\\n  text-decoration: none; }\\n\\nbutton {\\n  outline: none;\\n  border: none;\\n  cursor: pointer;\\n  background: none; }\\n\\nh1,\\nh2,\\nh3 {\\n  font-family: \\\"Teko\\\", sans-serif;\\n  line-height: 80%; }\\n\\nh1 {\\n  font-size: 64px; }\\n\\nh2 {\\n  font-size: 48px;\\n  text-transform: uppercase; }\\n\\nh3 {\\n  text-transform: uppercase;\\n  font-size: 36px; }\\n\\np,\\na {\\n  font-family: \\\"Reem Kufi\\\", sans-serif;\\n  font-size: 16px; }\\n\\n.no-fouc {\\n  display: none; }\\n\\nnav {\\n  padding: 20px 30px;\\n  display: flex;\\n  justify-content: space-between;\\n  align-items: center; }\\n  nav .nav-links a {\\n    color: #080808;\\n    padding: 0 15px; }\\n\\nmain {\\n  height: 80vh;\\n  display: flex;\\n  align-items: center; }\\n\\n.slide-wrapper {\\n  display: flex;\\n  width: 100%; }\\n  .slide-wrapper .controls,\\n  .slide-wrapper .other-controls {\\n    background: #fff;\\n    z-index: 2;\\n    flex-basis: 120px;\\n    display: flex;\\n    flex-direction: column;\\n    align-items: center; }\\n  .slide-wrapper .controls button {\\n    width: 100%;\\n    padding: 20px 0; }\\n  .slide-wrapper .other-controls {\\n    display: flex;\\n    flex-direction: column;\\n    justify-content: space-between; }\\n    .slide-wrapper .other-controls .card-number p {\\n      font-family: \\\"Teko\\\", sans-serif;\\n      font-size: 28px; }\\n    .slide-wrapper .other-controls .card-number p:first-child {\\n      border-bottom: 1px solid #cdcdcd; }\\n    .slide-wrapper .other-controls .social-media-icons {\\n      display: flex;\\n      flex-direction: column;\\n      align-items: center; }\\n      .slide-wrapper .other-controls .social-media-icons .fab {\\n        color: black;\\n        padding: 18px; }\\n\\n.wrapper {\\n  width: 100%;\\n  position: relative; }\\n\\n#container {\\n  flex-grow: 1;\\n  position: static;\\n  overflow-x: hidden;\\n  overflow-y: visible; }\\n\\n.card-wrapper {\\n  position: absolute;\\n  width: 100%;\\n  height: 100%; }\\n\\n.activate {\\n  animation: shrink-expand-card 900ms cubic-bezier(0.82, 0, 0, 0.96); }\\n\\n.card {\\n  height: 100%;\\n  display: flex; }\\n  .card .img-container {\\n    background: url(\" + escape(__webpack_require__(/*! ../../assets/img1_1.png */ \"./assets/img1_1.png\")) + \");\\n    background: purple;\\n    margin: -100px 0;\\n    flex-grow: 1; }\\n  .card .product-details {\\n    flex-basis: 55%;\\n    padding-right: 220px;\\n    display: flex;\\n    flex-direction: column;\\n    justify-content: center; }\\n    .card .product-details h2 {\\n      margin: 15px 0; }\\n    .card .product-details p {\\n      line-height: 30px;\\n      margin-bottom: 20px; }\\n  .card footer {\\n    position: absolute;\\n    bottom: 0;\\n    right: 0; }\\n    .card footer button {\\n      background: #585858;\\n      color: #ffff;\\n      padding: 25px 50px;\\n      text-transform: uppercase;\\n      font-family: \\\"Reem Kufi\\\", sans-serif;\\n      display: flex;\\n      align-items: center;\\n      font-size: 14px; }\\n      .card footer button .fas {\\n        margin-left: 40px; }\\n\\n.grey {\\n  background: #e7e6e8; }\\n  .grey .product-details h1 {\\n    color: #4f4d4f; }\\n  .grey .product-details h2 {\\n    color: #8e8d8f; }\\n\\n.cream {\\n  background: #eae2e1; }\\n  .cream .product-details h1 {\\n    color: #3d302f; }\\n  .cream .product-details h2 {\\n    color: #8f786b; }\\n\\n.blue {\\n  background: #dddfe9; }\\n  .blue .product-details h1 {\\n    color: #323843; }\\n  .blue .product-details h2 {\\n    color: #818b98; }\\n\\n@keyframes shrink-expand-card {\\n  0% {\\n    margin-left: 0px; }\\n  40% {\\n    margin-left: 250px; }\\n  100% {\\n    margin-left: 0px; } }\\n\\n.fa-star {\\n  margin-right: 8px; }\\n  .fa-star.star-checked {\\n    color: #ec8025; }\\n\", \"\"]);\n\n// exports\n\n\n//# sourceURL=webpack:///./src/sass/app.scss?./node_modules/css-loader!./node_modules/sass-loader/lib/loader.js");
 
 /***/ }),
 
@@ -813,6 +116,17 @@ eval("exports = module.exports = __webpack_require__(/*! ../../node_modules/css-
 /***/ (function(module, exports) {
 
 eval("/*\n\tMIT License http://www.opensource.org/licenses/mit-license.php\n\tAuthor Tobias Koppers @sokra\n*/\n// css base code, injected by the css-loader\nmodule.exports = function(useSourceMap) {\n\tvar list = [];\n\n\t// return the list of modules as css string\n\tlist.toString = function toString() {\n\t\treturn this.map(function (item) {\n\t\t\tvar content = cssWithMappingToString(item, useSourceMap);\n\t\t\tif(item[2]) {\n\t\t\t\treturn \"@media \" + item[2] + \"{\" + content + \"}\";\n\t\t\t} else {\n\t\t\t\treturn content;\n\t\t\t}\n\t\t}).join(\"\");\n\t};\n\n\t// import a list of modules into the list\n\tlist.i = function(modules, mediaQuery) {\n\t\tif(typeof modules === \"string\")\n\t\t\tmodules = [[null, modules, \"\"]];\n\t\tvar alreadyImportedModules = {};\n\t\tfor(var i = 0; i < this.length; i++) {\n\t\t\tvar id = this[i][0];\n\t\t\tif(typeof id === \"number\")\n\t\t\t\talreadyImportedModules[id] = true;\n\t\t}\n\t\tfor(i = 0; i < modules.length; i++) {\n\t\t\tvar item = modules[i];\n\t\t\t// skip already imported module\n\t\t\t// this implementation is not 100% perfect for weird media query combinations\n\t\t\t//  when a module is imported multiple times with different media queries.\n\t\t\t//  I hope this will never occur (Hey this way we have smaller bundles)\n\t\t\tif(typeof item[0] !== \"number\" || !alreadyImportedModules[item[0]]) {\n\t\t\t\tif(mediaQuery && !item[2]) {\n\t\t\t\t\titem[2] = mediaQuery;\n\t\t\t\t} else if(mediaQuery) {\n\t\t\t\t\titem[2] = \"(\" + item[2] + \") and (\" + mediaQuery + \")\";\n\t\t\t\t}\n\t\t\t\tlist.push(item);\n\t\t\t}\n\t\t}\n\t};\n\treturn list;\n};\n\nfunction cssWithMappingToString(item, useSourceMap) {\n\tvar content = item[1] || '';\n\tvar cssMapping = item[3];\n\tif (!cssMapping) {\n\t\treturn content;\n\t}\n\n\tif (useSourceMap && typeof btoa === 'function') {\n\t\tvar sourceMapping = toComment(cssMapping);\n\t\tvar sourceURLs = cssMapping.sources.map(function (source) {\n\t\t\treturn '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'\n\t\t});\n\n\t\treturn [content].concat(sourceURLs).concat([sourceMapping]).join('\\n');\n\t}\n\n\treturn [content].join('\\n');\n}\n\n// Adapted from convert-source-map (MIT)\nfunction toComment(sourceMap) {\n\t// eslint-disable-next-line no-undef\n\tvar base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));\n\tvar data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;\n\n\treturn '/*# ' + data + ' */';\n}\n\n\n//# sourceURL=webpack:///./node_modules/css-loader/lib/css-base.js?");
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/lib/url/escape.js":
+/*!***************************************************!*\
+  !*** ./node_modules/css-loader/lib/url/escape.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = function escape(url) {\n    if (typeof url !== 'string') {\n        return url\n    }\n    // If url is already wrapped in quotes, remove them\n    if (/^['\"].*['\"]$/.test(url)) {\n        url = url.slice(1, -1);\n    }\n    // Should url be wrapped?\n    // See https://drafts.csswg.org/css-values-3/#urls\n    if (/[\"'() \\t\\n]/.test(url)) {\n        return '\"' + url.replace(/\"/g, '\\\\\"').replace(/\\n/g, '\\\\n') + '\"'\n    }\n\n    return url\n}\n\n\n//# sourceURL=webpack:///./node_modules/css-loader/lib/url/escape.js?");
 
 /***/ }),
 
@@ -846,7 +160,7 @@ eval("\n/**\n * When source maps are enabled, `style-loader` uses a link element
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nvar _app = __webpack_require__(/*! ../sass/app.scss */ \"./src/sass/app.scss\");\n\nvar _app2 = _interopRequireDefault(_app);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\n//# sourceURL=webpack:///./src/js/app.js?");
+eval("\n\nvar _app = __webpack_require__(/*! ../sass/app.scss */ \"./src/sass/app.scss\");\n\nvar _app2 = _interopRequireDefault(_app);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nwindow.onload = function () {\n  // prevent FOUC phenomena\n  document.querySelector(\".no-fouc\").classList.remove(\"no-fouc\");\n\n  // global variables\n  var cards = document.querySelectorAll(\"div.card-wrapper\");\n  var cardWidth = document.getElementById(\"container\").offsetWidth;\n  var counter = 1;\n\n  function setInitialStateForCards() {\n    // tranlslate/spread cards on the x plane by multiplying the card width by the index of the card\n    cards.forEach(function (item, index) {\n      item.style.transform = \"translateX(\" + cardWidth * index + \"px)\";\n    });\n  }\n\n  function toggleCardsFunctionality() {\n    var rightAngleButton = document.getElementById(\"right-angle\");\n    var leftAngleButton = document.getElementById(\"left-angle\");\n\n    function shuffleCards(movementDirection) {\n      if (movementDirection === \"rightToLeft\") {\n        cards.forEach(function (card, index) {\n          translateCard(card, index, function (a, b) {\n            return a - b;\n          });\n        });\n      } else {\n        cards.forEach(function (card, index) {\n          translateCard(card, index, function (a, b) {\n            return a + b;\n          });\n        });\n      }\n    }\n\n    function translateCard(card, index, cb) {\n      var newTranslateXValue = cb(parseInt(card.style.transform.replace(/[^\\d.-]/g, \"\"), 10), cardWidth);\n      card.style.transition = \"transform 1000ms cubic-bezier(0.82, 0, 0, 0.96)\";\n      card.style.transform = \"translateX(\" + newTranslateXValue + \"px)\";\n      // if (index === counter) {\n      //   card.classList.add(\"activate\");\n      // }\n    }\n\n    rightAngleButton.addEventListener(\"click\", function () {\n      if (counter > 1) {\n        shuffleCards(\"leftToRight\");\n        counter--;\n      }\n      showCurrentCardNumber(counter);\n    });\n\n    leftAngleButton.addEventListener(\"click\", function () {\n      if (counter < cards.length) {\n        shuffleCards(\"rightToLeft\");\n        counter++;\n      }\n      showCurrentCardNumber(counter);\n    });\n  }\n\n  function showCurrentCardNumber(counter) {\n    var el = document.getElementById(\"card-number\");\n    el.innerHTML = \"0\" + counter;\n  }\n\n  setInitialStateForCards();\n  showCurrentCardNumber(counter);\n  toggleCardsFunctionality();\n};\n\n// item.style.transition =\n// \"transform 1000ms cubic-bezier(0.82, 0, 0, 0.96)\";\n\n//# sourceURL=webpack:///./src/js/app.js?");
 
 /***/ }),
 
@@ -857,7 +171,7 @@ eval("\n\nvar _app = __webpack_require__(/*! ../sass/app.scss */ \"./src/sass/ap
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("\nvar content = __webpack_require__(/*! !../../node_modules/css-loader!../../node_modules/postcss-loader/lib!../../node_modules/sass-loader/lib/loader.js!./app.scss */ \"./node_modules/css-loader/index.js!./node_modules/postcss-loader/lib/index.js!./node_modules/sass-loader/lib/loader.js!./src/sass/app.scss\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(true) {\n\tmodule.hot.accept(/*! !../../node_modules/css-loader!../../node_modules/postcss-loader/lib!../../node_modules/sass-loader/lib/loader.js!./app.scss */ \"./node_modules/css-loader/index.js!./node_modules/postcss-loader/lib/index.js!./node_modules/sass-loader/lib/loader.js!./src/sass/app.scss\", function() {\n\t\tvar newContent = __webpack_require__(/*! !../../node_modules/css-loader!../../node_modules/postcss-loader/lib!../../node_modules/sass-loader/lib/loader.js!./app.scss */ \"./node_modules/css-loader/index.js!./node_modules/postcss-loader/lib/index.js!./node_modules/sass-loader/lib/loader.js!./src/sass/app.scss\");\n\n\t\tif(typeof newContent === 'string') newContent = [[module.i, newContent, '']];\n\n\t\tvar locals = (function(a, b) {\n\t\t\tvar key, idx = 0;\n\n\t\t\tfor(key in a) {\n\t\t\t\tif(!b || a[key] !== b[key]) return false;\n\t\t\t\tidx++;\n\t\t\t}\n\n\t\t\tfor(key in b) idx--;\n\n\t\t\treturn idx === 0;\n\t\t}(content.locals, newContent.locals));\n\n\t\tif(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');\n\n\t\tupdate(newContent);\n\t});\n\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//# sourceURL=webpack:///./src/sass/app.scss?");
+eval("\nvar content = __webpack_require__(/*! !../../node_modules/css-loader!../../node_modules/sass-loader/lib/loader.js!./app.scss */ \"./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./src/sass/app.scss\");\n\nif(typeof content === 'string') content = [[module.i, content, '']];\n\nvar transform;\nvar insertInto;\n\n\n\nvar options = {\"hmr\":true}\n\noptions.transform = transform\noptions.insertInto = undefined;\n\nvar update = __webpack_require__(/*! ../../node_modules/style-loader/lib/addStyles.js */ \"./node_modules/style-loader/lib/addStyles.js\")(content, options);\n\nif(content.locals) module.exports = content.locals;\n\nif(false) {}\n\n//# sourceURL=webpack:///./src/sass/app.scss?");
 
 /***/ })
 
