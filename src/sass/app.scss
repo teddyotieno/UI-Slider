@@ -10,10 +10,6 @@ a {
   text-decoration: none;
 }
 
-.no-fouc {
-  display: none;
-}
-
 button {
   outline: none;
   border: none;
@@ -21,24 +17,43 @@ button {
   background: none;
 }
 
+h1,
+h2,
+h3 {
+  font-family: "Teko", sans-serif;
+  line-height: 80%;
+}
+
+h1 {
+  font-size: 64px;
+}
+h2 {
+  font-size: 48px;
+  text-transform: uppercase;
+}
+h3 {
+  text-transform: uppercase;
+  font-size: 36px;
+}
+p,
+a {
+  font-family: "Reem Kufi", sans-serif;
+  font-size: 16px;
+}
+
+.no-fouc {
+  display: none;
+}
+
 nav {
   padding: 20px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  .logo {
-    h1 {
-      font-family: "Teko", sans-serif;
-      text-transform: uppercase;
-      font-size: 48px;
-    }
-  }
   .nav-links {
     a {
-      font-family: "Reem Kufi", sans-serif;
       color: #080808;
       padding: 0 15px;
-      font-size: 20px;
     }
   }
 }
@@ -54,7 +69,9 @@ main {
   width: 100%;
   .controls,
   .other-controls {
-    flex-basis: 5%;
+    background: #fff;
+    z-index: 2;
+    flex-basis: 120px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -64,17 +81,16 @@ main {
       width: 100%;
       padding: 20px 0;
     }
-    button:first-child {
-      border-bottom: 1px solid rgb(211, 211, 211);
-    }
   }
   .other-controls {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     .card-number {
-      font-family: "Teko", sans-serif;
-      font-size: 28px;
+      p {
+        font-family: "Teko", sans-serif;
+        font-size: 28px;
+      }
       p:first-child {
         border-bottom: 1px solid #cdcdcd;
       }
@@ -84,17 +100,24 @@ main {
       flex-direction: column;
       align-items: center;
       .fab {
+        color: black;
         padding: 18px;
       }
     }
   }
 }
 
-#container {
-  flex-grow: 1;
-  height: 50vh;
+.wrapper {
+  width: 100%;
   position: relative;
-  overflow: hidden;
+}
+
+#container {
+  height: 50vh;
+  flex-grow: 1;
+  position: static;
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 
 .card-wrapper {
@@ -111,9 +134,26 @@ main {
 
 .card {
   height: 100%;
-  position: relative;
   display: flex;
-  .img.container {
+  .img-container {
+    background-size: cover;
+    background-position: center;
+    margin: -150px 0 -200px 0;
+    flex-grow: 1;
+  }
+  .product-details {
+    flex-basis: 50%;
+    padding-right: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    h2 {
+      margin: 15px 0;
+    }
+    p {
+      line-height: 30px;
+      margin-bottom: 20px;
+    }
   }
   footer {
     position: absolute;
@@ -122,24 +162,75 @@ main {
     button {
       background: #585858;
       color: #ffff;
-      padding: 25px 60px;
+      padding: 25px 50px;
       text-transform: uppercase;
       font-family: "Reem Kufi", sans-serif;
       display: flex;
       align-items: center;
       font-size: 14px;
+      .fas {
+        margin-left: 40px;
+      }
     }
   }
 }
 
 .grey {
-  background: #c0c0c0;
+  background: #e7e6e8;
+  .img-container {
+    background-image: url("../../assets/img1_1.png");
+  }
+  .product-details {
+    h1 {
+      color: #4f4d4f;
+    }
+    h2 {
+      color: #8e8d8f;
+    }
+    p {
+      color: #080709;
+    }
+  }
 }
 .cream {
-  background: #ebe7e4;
+  background: #eae2e1;
+  .img-container {
+    background-image: url("../../assets/img2.png");
+  }
+  .product-details {
+    h1 {
+      color: #3d302f;
+    }
+    h2 {
+      color: #8f786b;
+    }
+    p {
+      color: #131010;
+    }
+  }
+  .discover-more {
+    background: #70534a;
+  }
 }
 .blue {
-  background: #c3c9d4;
+  background: #dddfe9;
+  .img-container {
+    background-image: url("../../assets/img3.png");
+  }
+  .product-details {
+    h1 {
+      color: #323843;
+    }
+    h2 {
+      color: #818b98;
+    }
+    p {
+      color: #7c828d;
+    }
+  }
+  .discover-more {
+    background: #474f5b;
+  }
 }
 
 @keyframes shrink-expand-card {
@@ -151,5 +242,12 @@ main {
   }
   100% {
     margin-left: 0px;
+  }
+}
+
+.fa-star {
+  margin-right: 8px;
+  &.star-checked {
+    color: #ec8025;
   }
 }
