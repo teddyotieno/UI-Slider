@@ -25,20 +25,20 @@ h3 {
 }
 
 h1 {
-  font-size: 72px;
+  font-size: 64px;
 }
 h2 {
-  font-size: 64px;
+  font-size: 48px;
   text-transform: uppercase;
 }
 h3 {
   text-transform: uppercase;
-  font-size: 48px;
+  font-size: 36px;
 }
 p,
 a {
   font-family: "Reem Kufi", sans-serif;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .no-fouc {
@@ -69,7 +69,9 @@ main {
   width: 100%;
   .controls,
   .other-controls {
-    flex-basis: 8%;
+    background: #fff;
+    z-index: 2;
+    flex-basis: 120px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -105,11 +107,16 @@ main {
   }
 }
 
+.wrapper {
+  width: 100%;
+  position: relative;
+}
+
 #container {
   flex-grow: 1;
-  height: 50vh;
-  position: relative;
-  overflow: hidden;
+  position: static;
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 
 .card-wrapper {
@@ -126,9 +133,11 @@ main {
 
 .card {
   height: 100%;
-  position: relative;
   display: flex;
   .img-container {
+    background-size: cover;
+    background-position: center;
+    margin: -120px 0 -250px 0;
     flex-grow: 1;
   }
   .product-details {
@@ -141,7 +150,8 @@ main {
       margin: 15px 0;
     }
     p {
-      line-height: 40px;
+      line-height: 30px;
+      margin-bottom: 20px;
     }
   }
   footer {
@@ -151,18 +161,24 @@ main {
     button {
       background: #585858;
       color: #ffff;
-      padding: 25px 60px;
+      padding: 25px 50px;
       text-transform: uppercase;
       font-family: "Reem Kufi", sans-serif;
       display: flex;
       align-items: center;
       font-size: 14px;
+      .fas {
+        margin-left: 40px;
+      }
     }
   }
 }
 
 .grey {
   background: #e7e6e8;
+  .img-container {
+    background-image: url("../../assets/img1_1.png");
+  }
   .product-details {
     h1 {
       color: #4f4d4f;
@@ -174,6 +190,9 @@ main {
 }
 .cream {
   background: #eae2e1;
+  .img-container {
+    background-image: url("../../assets/img2.png");
+  }
   .product-details {
     h1 {
       color: #3d302f;
@@ -185,6 +204,9 @@ main {
 }
 .blue {
   background: #dddfe9;
+  .img-container {
+    background-image: url("../../assets/img3.png");
+  }
   .product-details {
     h1 {
       color: #323843;
