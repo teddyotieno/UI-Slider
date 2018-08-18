@@ -26,12 +26,16 @@ window.onload = function() {
           translateCard(card, index, function(a, b) {
             return a - b;
           });
+          if (index === counter) {
+            card.classList.add("gutter-left");
+          }
         });
       } else {
         cards.forEach(function(card, index) {
           translateCard(card, index, function(a, b) {
             return a + b;
           });
+          card.classList.remove("gutter-left");
         });
       }
     }
@@ -43,9 +47,6 @@ window.onload = function() {
       );
       card.style.transition = "transform 1000ms cubic-bezier(0.82, 0, 0, 0.96)";
       card.style.transform = `translateX(${newTranslateXValue}px)`;
-      // if (index === counter) {
-      //   card.classList.add("activate");
-      // }
     }
 
     rightAngleButton.addEventListener("click", () => {
@@ -53,7 +54,9 @@ window.onload = function() {
         shuffleCards("leftToRight");
         counter--;
       }
-      showCurrentCardNumber(counter);
+      setTimeout(() => {
+        showCurrentCardNumber(counter);
+      }, 600);
     });
 
     leftAngleButton.addEventListener("click", () => {
@@ -61,7 +64,9 @@ window.onload = function() {
         shuffleCards("rightToLeft");
         counter++;
       }
-      showCurrentCardNumber(counter);
+      setTimeout(() => {
+        showCurrentCardNumber(counter);
+      }, 600);
     });
   }
 
