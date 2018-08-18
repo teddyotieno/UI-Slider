@@ -113,6 +113,7 @@ main {
 }
 
 #container {
+  height: 50vh;
   flex-grow: 1;
   position: static;
   overflow-x: hidden;
@@ -137,12 +138,12 @@ main {
   .img-container {
     background-size: cover;
     background-position: center;
-    margin: -120px 0 -250px 0;
+    margin: -150px 0 -200px 0;
     flex-grow: 1;
   }
   .product-details {
-    flex-basis: 55%;
-    padding-right: 220px;
+    flex-basis: 50%;
+    padding-right: 120px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -186,6 +187,9 @@ main {
     h2 {
       color: #8e8d8f;
     }
+    p {
+      color: #080709;
+    }
   }
 }
 .cream {
@@ -200,6 +204,12 @@ main {
     h2 {
       color: #8f786b;
     }
+    p {
+      color: #131010;
+    }
+  }
+  .discover-more {
+    background: #70534a;
   }
 }
 .blue {
@@ -214,6 +224,12 @@ main {
     h2 {
       color: #818b98;
     }
+    p {
+      color: #7c828d;
+    }
+  }
+  .discover-more {
+    background: #474f5b;
   }
 }
 

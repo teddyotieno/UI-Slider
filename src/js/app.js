@@ -74,6 +74,3 @@ window.onload = function() {
   showCurrentCardNumber(counter);
   toggleCardsFunctionality();
 };
-
-// item.style.transition =
-// "transform 1000ms cubic-bezier(0.82, 0, 0, 0.96)";
