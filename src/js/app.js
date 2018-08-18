@@ -53,7 +53,9 @@ window.onload = function() {
         shuffleCards("leftToRight");
         counter--;
       }
-      showCurrentCardNumber(counter);
+      setTimeout(() => {
+        showCurrentCardNumber(counter);
+      }, 600);
     });
 
     leftAngleButton.addEventListener("click", () => {
@@ -61,7 +63,9 @@ window.onload = function() {
         shuffleCards("rightToLeft");
         counter++;
       }
-      showCurrentCardNumber(counter);
+      setTimeout(() => {
+        showCurrentCardNumber(counter);
+      }, 600);
     });
   }
 
