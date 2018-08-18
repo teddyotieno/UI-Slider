@@ -10,10 +10,6 @@ a {
   text-decoration: none;
 }
 
-.no-fouc {
-  display: none;
-}
-
 button {
   outline: none;
   border: none;
@@ -21,24 +17,43 @@ button {
   background: none;
 }
 
+h1,
+h2,
+h3 {
+  font-family: "Teko", sans-serif;
+  line-height: 80%;
+}
+
+h1 {
+  font-size: 72px;
+}
+h2 {
+  font-size: 64px;
+  text-transform: uppercase;
+}
+h3 {
+  text-transform: uppercase;
+  font-size: 48px;
+}
+p,
+a {
+  font-family: "Reem Kufi", sans-serif;
+  font-size: 18px;
+}
+
+.no-fouc {
+  display: none;
+}
+
 nav {
   padding: 20px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  .logo {
-    h1 {
-      font-family: "Teko", sans-serif;
-      text-transform: uppercase;
-      font-size: 48px;
-    }
-  }
   .nav-links {
     a {
-      font-family: "Reem Kufi", sans-serif;
       color: #080808;
       padding: 0 15px;
-      font-size: 20px;
     }
   }
 }
@@ -54,7 +69,7 @@ main {
   width: 100%;
   .controls,
   .other-controls {
-    flex-basis: 5%;
+    flex-basis: 8%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -64,17 +79,16 @@ main {
       width: 100%;
       padding: 20px 0;
     }
-    button:first-child {
-      border-bottom: 1px solid rgb(211, 211, 211);
-    }
   }
   .other-controls {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     .card-number {
-      font-family: "Teko", sans-serif;
-      font-size: 28px;
+      p {
+        font-family: "Teko", sans-serif;
+        font-size: 28px;
+      }
       p:first-child {
         border-bottom: 1px solid #cdcdcd;
       }
@@ -84,6 +98,7 @@ main {
       flex-direction: column;
       align-items: center;
       .fab {
+        color: black;
         padding: 18px;
       }
     }
@@ -113,7 +128,21 @@ main {
   height: 100%;
   position: relative;
   display: flex;
-  .img.container {
+  .img-container {
+    flex-grow: 1;
+  }
+  .product-details {
+    flex-basis: 55%;
+    padding-right: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    h2 {
+      margin: 15px 0;
+    }
+    p {
+      line-height: 40px;
+    }
   }
   footer {
     position: absolute;
@@ -133,13 +162,37 @@ main {
 }
 
 .grey {
-  background: #c0c0c0;
+  background: #e7e6e8;
+  .product-details {
+    h1 {
+      color: #4f4d4f;
+    }
+    h2 {
+      color: #8e8d8f;
+    }
+  }
 }
 .cream {
-  background: #ebe7e4;
+  background: #eae2e1;
+  .product-details {
+    h1 {
+      color: #3d302f;
+    }
+    h2 {
+      color: #8f786b;
+    }
+  }
 }
 .blue {
-  background: #c3c9d4;
+  background: #dddfe9;
+  .product-details {
+    h1 {
+      color: #323843;
+    }
+    h2 {
+      color: #818b98;
+    }
+  }
 }
 
 @keyframes shrink-expand-card {
@@ -151,5 +204,12 @@ main {
   }
   100% {
     margin-left: 0px;
+  }
+}
+
+.fa-star {
+  margin-right: 8px;
+  &.star-checked {
+    color: #ec8025;
   }
 }
