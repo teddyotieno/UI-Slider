@@ -6,4 +6,4 @@ All credit goes to the Designer: Giulio Cuscito
 
 
 
-Project is hosted [here](https://teddyotieno.github.io/ui-stuff-slider/)
+Project is hosted [here](https://teddyotieno.github.io/UI-Slider/)
